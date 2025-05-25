@@ -73,11 +73,25 @@ public class DataBaseServiceTask {
         }
     }
 
+    public String conCludedTask(int id){
+        try {
+            return new TaskDAO(connection).concludedTask(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Erro ao concluir tarefa: " + e.getMessage();
+        }
+    }
 
 
     public List<Task> listTasks(int id) {
         return new TaskDAO(connection).getTasks(id);
     }
+
+    public List<Task> listConcludedTasks(int id) {
+        return new TaskDAO(connection).getConcludedTasks(id);
+    }
+
+
 
 
 

@@ -143,4 +143,48 @@ public class TaskDAO {
         }
         return tasks;
     }
+
+    public List<Task> getConcludedTasks(int user_id) {
+
+        List<Task> tasks = new ArrayList<>();
+        String sql = "SELECT * FROM tarefa WHERE codusuario = ? and concluido = false";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, user_id);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Task task = new Task();
+                    task.setId(rs.getInt("id"));
+                    task.setTitle(rs.getString("titulo"));
+                    task.setDescription(rs.getString("descricao"));
+                    task.setStatus(rs.getBoolean("concluido"));
+
+                    tasks.add(task);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar tarefas por usuário: " + e.getMessage());
+        }
+        return tasks;
+    }
+
+    public String concludedTask(int id) {
+        String sql = "UPDATE tarefa SET concluido = false WHERE id = ?";
+
+        try {
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setInt(1, id);
+
+            int rowsUpdated = pstmt.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                return "Tarefa marcada como não concluída.";
+            } else {
+                return "Nenhuma tarefa foi atualizada.";
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao atualizar tarefa: " + e.getMessage(), e);
+        }
+    }
 }
