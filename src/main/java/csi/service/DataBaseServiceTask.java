@@ -91,6 +91,10 @@ public class DataBaseServiceTask {
         return new TaskDAO(connection).getConcludedTasks(id);
     }
 
+    public Task getTaskById(int id) {
+        return new TaskDAO(connection).getTaskById(id);
+    }
+
 
 
 

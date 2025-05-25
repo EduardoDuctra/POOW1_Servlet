@@ -1,5 +1,6 @@
 package csi.dao;
 
+import csi.model.Category;
 import csi.model.Task;
 import csi.model.User;
 
@@ -13,9 +14,11 @@ import java.util.List;
 public class TaskDAO {
 
     private Connection connection;
+    private CategoryDAO categoryDAO;
 
     public TaskDAO(Connection connection) {
         this.connection = connection;
+        this.categoryDAO = new CategoryDAO(connection);
     }
 
     public String insertTask(Task task) {
@@ -78,6 +81,32 @@ public class TaskDAO {
         }
     }
 
+    public Task getTaskById(int id) {
+        String sql = "SELECT * FROM tarefa WHERE id = ?";
+
+        Task task = null;
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+
+                task = new Task();
+                task.setId(rs.getInt("id"));
+                task.setTitle(rs.getString("titulo"));
+                task.setDescription(rs.getString("descricao"));
+                task.setStatus(rs.getBoolean("concluido"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Erro ao recuperar tarefa: " + e.getMessage());
+        }
+
+        return task;
+    }
+
+
     public String updateTask(Task task) {
         String sql = "UPDATE tarefa SET titulo = ?, descricao = ?, concluido = ? WHERE id = ?";
 
@@ -120,9 +149,8 @@ public class TaskDAO {
     }
 
     public List<Task> getTasks(int user_id) {
-
         List<Task> tasks = new ArrayList<>();
-        String sql = "SELECT * FROM tarefa WHERE codusuario = ?";
+        String sql = "SELECT * FROM tarefa WHERE codusuario = ? AND concluido = true";
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, user_id);
@@ -135,6 +163,14 @@ public class TaskDAO {
                     task.setDescription(rs.getString("descricao"));
                     task.setStatus(rs.getBoolean("concluido"));
 
+                    User user = new User();
+                    user.setId(rs.getInt("codusuario"));
+                    task.setUser(user);
+
+                    int categoriaId = rs.getInt("codcategoria");
+                    Category category = categoryDAO.getCategoryById(categoriaId);
+                    task.setCategory(category);
+
                     tasks.add(task);
                 }
             }
@@ -143,7 +179,6 @@ public class TaskDAO {
         }
         return tasks;
     }
-
     public List<Task> getConcludedTasks(int user_id) {
 
         List<Task> tasks = new ArrayList<>();
@@ -159,6 +194,15 @@ public class TaskDAO {
                     task.setTitle(rs.getString("titulo"));
                     task.setDescription(rs.getString("descricao"));
                     task.setStatus(rs.getBoolean("concluido"));
+
+
+                    User user = new User();
+                    user.setId(rs.getInt("codusuario"));
+                    task.setUser(user);
+
+                    int categoriaId = rs.getInt("codcategoria");
+                    Category category = categoryDAO.getCategoryById(categoriaId);
+                    task.setCategory(category);
 
                     tasks.add(task);
                 }

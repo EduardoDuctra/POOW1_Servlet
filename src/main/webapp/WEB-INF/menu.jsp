@@ -19,26 +19,28 @@ Bem-vindo, ${sessionScope.user.name}
 ID de Usuário: ${sessionScope.user.id}
 
 <ul>
+
   <li>
     <form action="${pageContext.request.contextPath}/tasks" method="get">
-      <input type="hidden" name="action" value="listar_concluidas">
+      <input type="hidden" name="action" value="criar">
+      <button type="submit">Criar Tarefa</button>
+    </form>
+  </li>
+
+  <li>
+    <form action="${pageContext.request.contextPath}/tasks" method="get">
+      <input type="hidden" name="action" value="listar-concluidas">
       <button type="submit">Tarefas Concluídas</button>
     </form>
   </li>
 
   <li>
     <form action="${pageContext.request.contextPath}/tasks" method="get">
-      <input type="hidden" name="action" value="listar_pendentes">
+      <input type="hidden" name="action" value="listar-pendentes">
       <button type="submit">Tarefas Pendentes</button>
     </form>
   </li>
 
-  <li>
-    <form action="${pageContext.request.contextPath}/tasks" method="get">
-      <input type="hidden" name="action" value="listar_todas">
-      <button type="submit">Todas as Tarefas</button>
-    </form>
-  </li>
 </ul>
 
 <form action="${pageContext.request.contextPath}/user" method="get">
