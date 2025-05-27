@@ -2,6 +2,7 @@ package csi.service;
 
 import csi.dao.TaskDAO;
 import csi.dao.UserDAO;
+import csi.model.Category;
 import csi.model.Task;
 import csi.model.User;
 import csi.util.ConnectionFactory;
@@ -85,6 +86,10 @@ public class DataBaseServiceTask {
 
     public List<Task> listTasks(int id) {
         return new TaskDAO(connection).getTasks(id);
+    }
+
+    public List<Task> listFilterTasks(int id, Category category) {
+        return new TaskDAO(connection).getTasksByCategory(id, category);
     }
 
     public List<Task> listConcludedTasks(int id) {

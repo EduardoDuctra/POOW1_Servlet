@@ -19,7 +19,7 @@
   <c:otherwise>
 
     <form action="${pageContext.request.contextPath}/tasks" method="get">
-      <input type="hidden" name="action" value="listar-todas" />
+      <input type="hidden" name="action" value="listar-pendentes" />
       <button type="submit">Listar Todas </button>
     </form>
 
@@ -46,7 +46,7 @@
         <th>Descrição</th>
         <th>Categoria</th>
         <th>Status</th>
-        <th colspan="2">Ações</th>
+        <th colspan="3">Ações</th>
       </tr>
       </thead>
       <tbody>
@@ -65,6 +65,17 @@
               <button type="submit">Editar</button>
             </form>
           </td>
+
+          <td>
+            <form action="${pageContext.request.contextPath}/tasks" method="post">
+              <input type="hidden" name="action" value="deletar" />
+              <input type="hidden" name="id" value="${task.id}" />
+
+              <button type="submit">Deletar</button>
+            </form>
+          </td>
+
+
           <td>
             <form action="${pageContext.request.contextPath}/tasks" method="post">
               <input type="hidden" name="action" value="concluida" />

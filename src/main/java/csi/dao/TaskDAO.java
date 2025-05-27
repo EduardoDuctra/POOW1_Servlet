@@ -179,6 +179,37 @@ public class TaskDAO {
         }
         return tasks;
     }
+    public List<Task> getTasksByCategory(int user_id, Category category) {
+        List<Task> tasks = new ArrayList<>();
+        String sql = "SELECT * FROM tarefa WHERE codusuario = ? AND concluido = true and codcategoria = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, user_id);
+            pstmt.setInt(2, category.getId());
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Task task = new Task();
+                    task.setId(rs.getInt("id"));
+                    task.setTitle(rs.getString("titulo"));
+                    task.setDescription(rs.getString("descricao"));
+                    task.setStatus(rs.getBoolean("concluido"));
+
+                    User user = new User();
+                    user.setId(rs.getInt("codusuario"));
+                    task.setUser(user);
+
+                    task.setCategory(category);
+
+                    tasks.add(task);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro ao listar tarefas por usuário: " + e.getMessage());
+        }
+        return tasks;
+    }
+
     public List<Task> getConcludedTasks(int user_id) {
 
         List<Task> tasks = new ArrayList<>();

@@ -84,6 +84,39 @@ public class TaskServlet extends HttpServlet {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/listar-concluidas.jsp");
             dispatcher.forward(request, response);
             return;
+        }else if ("trabalho".equals(action) || "pessoal".equals(action) || "estudo".equals(action)) {
+
+            // Supondo que você esteja recebendo isso como parâmetro
+            String categoryStr = action;
+
+            Category category = new Category();
+            switch (categoryStr) {
+                case "trabalho":
+                    category.setId(1);
+                    category.setName("Trabalho");
+                    break;
+                case "pessoal":
+                    category.setId(2);
+                    category.setName("Pessoal");
+                    break;
+                case "estudo":
+                    category.setId(3);
+                    category.setName("Estudo");
+                    break;
+            }
+
+            HttpSession session = request.getSession();
+            User user = (User) session.getAttribute("user");
+
+            System.out.println("Codigo Usuario: " + user.getId());
+
+            List<Task> filterTasks = db_task.listFilterTasks(user.getId(), category);
+
+            request.setAttribute("tasks", filterTasks);
+
+            RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/listar-pendentes.jsp");
+            dispatcher.forward(request, response);
+            return;
         }
 
 
@@ -184,7 +217,20 @@ public class TaskServlet extends HttpServlet {
             }
 
             response.sendRedirect(request.getContextPath() + "/tasks?action=listar-pendentes");
+        }else if ("deletar".equals(action)) {
+            String idStr = request.getParameter("id");
+            System.out.println("Código da Task no POST para deletar: " + idStr);
+
+            try {
+                int id = Integer.parseInt(idStr);
+                db_task.deletTask(id);
+            } catch (NumberFormatException e) {
+                System.out.println("ID inválido para deleção: " + idStr);
+            }
+
+            response.sendRedirect(request.getContextPath() + "/tasks?action=listar-pendentes");
         }
+
     }
 
 
