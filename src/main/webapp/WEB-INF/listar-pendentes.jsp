@@ -17,6 +17,27 @@
     <p>Não há tarefas pendentes.</p>
   </c:when>
   <c:otherwise>
+
+    <form action="${pageContext.request.contextPath}/tasks" method="get">
+      <input type="hidden" name="action" value="listar-todas" />
+      <button type="submit">Listar Todas </button>
+    </form>
+
+    <form action="${pageContext.request.contextPath}/tasks" method="get">
+      <input type="hidden" name="action" value="trabalho" />
+      <button type="submit">Trabalho</button>
+    </form>
+
+    <form action="${pageContext.request.contextPath}/tasks" method="get">
+      <input type="hidden" name="action" value="estudo" />
+      <button type="submit">Estudo</button>
+    </form>
+
+    <form action="${pageContext.request.contextPath}/tasks" method="get">
+      <input type="hidden" name="action" value="pessoal" />
+      <button type="submit">Pessoal</button>
+    </form>
+
     <table>
       <thead>
       <tr>
