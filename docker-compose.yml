@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   db:
     image: postgres:15
@@ -10,23 +11,29 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped  # Adicione esta linha para o PostgreSQL
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   app:
     build: .
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      db:
+        condition: service_healthy  # Espera até o banco estar pronto
     environment:
-      # Variáveis de ambiente para conexão com o banco
       DB_HOST: db
       DB_PORT: 5432
       DB_NAME: tarefas
       DB_USER: postgres
       DB_PASS: 2016010124
     volumes:
-      - ./logs:/app/logs  # Mapeia logs do container para o host (se você usar logs em /app/logs)
-    restart: unless-stopped   # Para reiniciar o container automaticamente em caso de falha
+      - ./logs:/app/logs
+    restart: unless-stopped
 
 volumes:
   postgres_data:
