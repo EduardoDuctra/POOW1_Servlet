@@ -1,13 +1,14 @@
-FROM maven:3.8.6-jdk-11 AS build
-
-RUN git clone https://github.com/EduardoDuctra/trabalho2_SO.git /app
-
+# Estágio de build
+FROM maven:3.8.6-eclipse-temurin-17 AS builder
 WORKDIR /app
+COPY pom.xml .
+RUN mvn dependency:go-offline
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-RUN mvn clean package
-
-FROM tomcat:9-jdk11-openjdk-slim
-
-COPY --from=build /app/target/usuario_tarefa.war /usr/local/tomcat/webapps/usuario_tarefa.war
-
+# Estágio de execução
+FROM eclipse-temurin:17-jre-jammy
+WORKDIR /app
+COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
