@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: tarefas
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 2016010124
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      # Variáveis de ambiente para conexão com o banco
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: tarefas
+      DB_USER: postgres
+      DB_PASS: 2016010124
+    volumes:
+      - ./logs:/app/logs  # Mapeia logs do container para o host (se você usar logs em /app/logs)
+    restart: unless-stopped   # Para reiniciar o container automaticamente em caso de falha
+
+volumes:
+  postgres_data:
